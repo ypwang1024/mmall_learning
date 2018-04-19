@@ -159,7 +159,7 @@ public class UserServiceImpl implements IUserService {
         return ServerResponse.createByErrorMessage("修改密码失败");
     }
 
-    @Autowired
+    @Override
     public ServerResponse<String> resetPassword(String passwordOld, String passwordNew, User user) {
         // 防止横向越权，要校验一下这个用户的旧密码，一定要指定这个用户，因为我们会查询一个count(1),如果不指定ID，那么结果count(1)很大几率大于0
         // 1. 验证旧密码是否正确
@@ -195,11 +195,11 @@ public class UserServiceImpl implements IUserService {
         updateUser.setPhone(user.getPhone());
         updateUser.setQuestion(user.getQuestion());
         updateUser.setAnswer(user.getAnswer());
-        // 注意更新时间，updateByPrimaryKeySelective 会判断UpdateTime是否为空，此处不为空，会在sql语句中重新对该字段赋值
-        updateUser.setUpdateTime(user.getUpdateTime());
 
         int updateCount = userMapper.updateByPrimaryKeySelective(updateUser);
         if (updateCount > 0) {
+            updateUser = userMapper.selectByPrimaryKey(user.getId());
+            updateUser.setPassword("");
             return ServerResponse.createBySuccessMessageData("更新更新个人信息成功", updateUser);
         }
         return ServerResponse.createByErrorMessage("更新个人信息失败");

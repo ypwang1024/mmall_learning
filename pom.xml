@@ -269,8 +269,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <!--jdk，jre版本-->
-          <source>1.9</source>
-          <target>1.9</target>
+          <source>9</source>
+          <target>9</target>
           <encoding>UTF-8</encoding>
           <compilerArguments>
             <extdirs>${project.basedir}/src/main/webapp/WEB-INF/lib</extdirs>
