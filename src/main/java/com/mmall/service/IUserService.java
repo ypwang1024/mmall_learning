@@ -89,4 +89,6 @@ public interface IUserService {
      * @return
      */
     ServerResponse<User> getUserAllInfomation(Integer userId);
+
+    ServerResponse checkAdminRole(User user);
 }
