@@ -39,7 +39,7 @@ public class CategoryManageController {
      * @param parentId
      * @return
      */
-    @RequestMapping(value = "add_Category.do", method = RequestMethod.POST)
+    @RequestMapping(value = "add_category.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse addCategory(HttpSession session, String categoryName,
                                       @RequestParam(value = "parentId", defaultValue = "0") int parentId) {
