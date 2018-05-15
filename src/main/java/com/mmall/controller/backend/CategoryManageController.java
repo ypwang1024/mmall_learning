@@ -17,12 +17,12 @@ import javax.servlet.http.HttpSession;
 
 /**
  * @program: mmall
- * @description:
+ * @description: 分类管理Controller
  * @author: ypwang
  * @create: 2018-05-05 21:32
  **/
 @Controller()
-@RequestMapping("/manage/category/")
+@RequestMapping("/manage/category")
 public class CategoryManageController {
 
     @Autowired

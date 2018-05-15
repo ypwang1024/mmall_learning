@@ -1,6 +1,7 @@
 package com.mmall.controller.backend;
 
 import com.mmall.common.ConstValue;
+import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.User;
 import com.mmall.service.IUserService;
@@ -19,7 +20,7 @@ import javax.servlet.http.HttpSession;
  * @create: 2018-04-16 20:03
  **/
 @Controller
-@RequestMapping("manage/user")
+@RequestMapping("/manage/user")
 public class UserManageController {
 
     @Autowired
@@ -36,7 +37,7 @@ public class UserManageController {
                 session.setAttribute(ConstValue.CURRENT_USER, user);
                 return response;
             } else {
-                ServerResponse.createByErrorMessage("不是管理员，无法登录");
+                return ServerResponse.createByErrorCodeMessage(ResponseCode.ILLEGAL_ARGUMENT.getCode(), "不是管理员，无法登录");
             }
         }
         return response;
