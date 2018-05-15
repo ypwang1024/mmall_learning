@@ -1,12 +1,23 @@
 package com.mmall.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
+import com.mmall.common.ConstValue;
 import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
+import com.mmall.dao.CategoryMapper;
 import com.mmall.dao.ProductMapper;
+import com.mmall.pojo.Category;
 import com.mmall.pojo.Product;
 import com.mmall.service.IProductService;
+import com.mmall.util.DateTimeUtil;
 import com.mmall.util.PropertiesUtil;
 import com.mmall.vo.ProductDetailVo;
+import com.mmall.vo.ProductListVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +33,9 @@ public class ProductServiceImpl implements IProductService {
 
     @Autowired
     private ProductMapper productMapper;
+
+    @Autowired
+    private CategoryMapper categoryMapper;
 
     @Override
     public ServerResponse saveOrUpdateProduct(Product product) {
@@ -67,7 +81,8 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    public ServerResponse manageProductDetail(Integer productId) {
+    public ServerResponse<ProductDetailVo> manageProductDetail(Integer productId) {
+        // 返回包装类而不是返回product是因为包装类可以传递更多的信息
         if (productId == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.ILLEGAL_ARGUMENT.getCode(), ResponseCode.ILLEGAL_ARGUMENT.getDesc());
         }
@@ -78,8 +93,8 @@ public class ProductServiceImpl implements IProductService {
 
         // vo对象 --> value object 这里先按照这种写法进行编码
         // pojo --> bo (business object)--> vo (view object)
-
-        return ServerResponse.createBySuccessMessageData("获取商品成功", product);
+        ProductDetailVo productDetailVo = assembleProductDetailVo(product);
+        return ServerResponse.createBySuccessMessageData("获取商品成功", productDetailVo);
     }
 
     private ProductDetailVo assembleProductDetailVo(Product product) {
@@ -96,10 +111,52 @@ public class ProductServiceImpl implements IProductService {
         productDetailVo.setStock(product.getStock());
 
         // imageHost 通过配置文件进行设置
-        productDetailVo.setImageHost(PropertiesUtil.getProperty("",""));
+        productDetailVo.setImageHost(PropertiesUtil.getProperty(ConstValue.FTPSERVERIP,
+                ConstValue.FTPSERVERIPDEFAULTVALUE));
+
         // parentCategoryId
+        Category category = categoryMapper.selectByPrimaryKey(product.getCategoryId());
+        if (category == null) {
+            // 在这里认为是一个根节点
+            productDetailVo.setParentCategoryId(0);
+        } else {
+            productDetailVo.setParentCategoryId(category.getParentId());
+        }
         // createTime
+        productDetailVo.setCreateTime(DateTimeUtil.dateToString(product.getCreateTime()));
         // updateTime
-        return null;
+        productDetailVo.setUpdateTime(DateTimeUtil.dateToString(product.getUpdateTime()));
+        return productDetailVo;
+    }
+
+    public ServerResponse<PageInfo> getProductList(Integer pageNum, Integer pageSize) {
+        // 1. startPage -- start
+        PageHelper.startPage(pageNum, pageSize);
+        // 2. 填充自己的sql查询逻辑
+        List<Product> productList = productMapper.getProductList();
+        List<ProductListVo> productListVoList = Lists.newArrayList();
+        for (Product product : productList) {
+            productListVoList.add(assembleProductListVo(product));
+        }
+        // 3. pageHelper --收尾
+        PageInfo pageResult = new PageInfo();
+        pageResult.setList(productListVoList);
+        // 或者使用构造器注入list
+        // PageInfo pageResult = new PageInfo(productListVoList);
+        return ServerResponse.createBySuccessData(pageResult);
+    }
+
+    private ProductListVo assembleProductListVo(Product product) {
+        ProductListVo productListVo = new ProductListVo();
+        productListVo.setId(product.getId());
+        productListVo.setCategoryId(product.getCategoryId());
+        productListVo.setName(product.getName());
+        productListVo.setSubtitle(product.getSubtitle());
+        productListVo.setMainImage(product.getMainImage());
+        productListVo.setPrice(product.getPrice());
+        productListVo.setStatus(product.getStatus());
+        productListVo.setImageHost(PropertiesUtil.getProperty(ConstValue.FTPSERVERIP,
+                ConstValue.FTPSERVERIPDEFAULTVALUE));
+        return productListVo;
     }
 }

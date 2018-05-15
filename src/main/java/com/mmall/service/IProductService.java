@@ -1,7 +1,9 @@
 package com.mmall.service;
 
+import com.github.pagehelper.PageInfo;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.Product;
+import com.mmall.vo.ProductDetailVo;
 
 /**
  * @program: mmall
@@ -33,5 +35,13 @@ public interface IProductService {
      * @param productId
      * @return
      */
-    ServerResponse manageProductDetail(Integer productId);
+    ServerResponse<ProductDetailVo> manageProductDetail(Integer productId);
+
+    /**
+     * 使用pageHelper分页插件。实现分页
+     * @param pageNum 当前页数
+     * @param pageSize 每页最大记录数
+     * @return
+     */
+    ServerResponse<PageInfo> getProductList(Integer pageNum, Integer pageSize);
 }
