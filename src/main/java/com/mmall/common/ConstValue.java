@@ -33,4 +33,31 @@ public class ConstValue {
          */
         int ROLE_ADMIN = 1;
     }
+
+    /**
+     * FTP服务器IP
+     */
+    public static final String FTPSERVERIP = "ftp.server.ip";
+
+    public static final String FTPSERVERIPDEFAULTVALUE = "192.168.0.250";
+    /**
+     * FTP用户
+     */
+    public static final String FTPUSER = "ftp.user";
+    /**
+     * FTP用户密码
+     */
+    public static final String FTPPASS = "ftp.pass";
+    /**
+     * FTP HTTP地址前缀
+     */
+    public static final String FTPPREFIX = "ftp.server.http.prefix";
+    /**
+     * 支付宝回传地址
+     */
+    public static final String ALIPAYCALLBACKURL = "alipay.callback.url";
+    /**
+     * 密码盐值
+     */
+    public static final String PASSWORDSALT = "password.salt";
 }
