@@ -172,4 +172,18 @@
     FROM mmall_product
     ORDER BY id ASC
   </select>
+
+  <select id="selectByNameAndProductId" resultMap="BaseResultMap" parameterType="map">
+    SELECT
+    <include refid="Base_Column_List"></include>
+    FROM mmall_product
+    <where>
+      <if test="productName != null">
+        and name LIKE #{productName}
+      </if>
+      <if test="productId != null">
+        and id = #{productId}
+      </if>
+    </where>>
+  </select>
 </mapper>

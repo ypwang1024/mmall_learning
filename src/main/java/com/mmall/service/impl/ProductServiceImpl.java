@@ -129,6 +129,7 @@ public class ProductServiceImpl implements IProductService {
         return productDetailVo;
     }
 
+    @Override
     public ServerResponse<PageInfo> getProductList(Integer pageNum, Integer pageSize) {
         // 1. startPage -- start
         PageHelper.startPage(pageNum, pageSize);
@@ -158,5 +159,25 @@ public class ProductServiceImpl implements IProductService {
         productListVo.setImageHost(PropertiesUtil.getProperty(ConstValue.FTPSERVERIP,
                 ConstValue.FTPSERVERIPDEFAULTVALUE));
         return productListVo;
+    }
+
+    @Override
+    public ServerResponse<PageInfo> searchProduct(String productName, Integer productId,
+                                                  Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+
+        // 拼接模糊查询sql片段
+        if (StringUtils.isNotBlank(productName)) {
+            productName = new StringBuilder().append("%").append(productName).append("%").toString();
+        }
+
+        List<Product> productList = productMapper.selectByNameAndProductId(productName, productId);
+        List<ProductListVo> productListVoList = Lists.newArrayList();
+        for (Product product : productList) {
+            productListVoList.add(assembleProductListVo(product));
+        }
+
+        PageInfo pageResult = new PageInfo(productListVoList);
+        return ServerResponse.createBySuccessData(pageResult);
     }
 }
