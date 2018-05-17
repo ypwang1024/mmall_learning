@@ -39,7 +39,11 @@ public class ConstValue {
      */
     public static final String FTPSERVERIP = "ftp.server.ip";
 
-    public static final String FTPSERVERIPDEFAULTVALUE = "192.168.0.250";
+    public static final String FTPSERVERIPPORT = "ftp.server.port";
+
+    public static final String FTPSERVERIPDEFAULTVALUE = "192.168.1.104";
+
+    public static final String FTPSERVERPORTDEFAULTVALUE = "21";
     /**
      * FTP用户
      */
