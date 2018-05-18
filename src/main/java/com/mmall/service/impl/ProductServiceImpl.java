@@ -131,6 +131,8 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     public ServerResponse<PageInfo> getProductList(Integer pageNum, Integer pageSize) {
+        // 使用pagehelper插件实现分页逻辑
+
         // 1. startPage -- start
         PageHelper.startPage(pageNum, pageSize);
         // 2. 填充自己的sql查询逻辑

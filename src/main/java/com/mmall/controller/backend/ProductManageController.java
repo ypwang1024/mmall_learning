@@ -13,6 +13,7 @@ import com.mmall.util.PropertiesUtil;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -149,9 +151,9 @@ public class ProductManageController {
         }
     }
 
-    @RequestMapping(value = "uploadFile.do", method = RequestMethod.POST)
+    @RequestMapping(value = "upload_file.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse upload(HttpSession session, @RequestParam(value = "upload_file",required = false) MultipartFile file, HttpServletRequest request) {
+    public ServerResponse upload(HttpSession session, @RequestParam(value = "upload_file", required = false) MultipartFile file, HttpServletRequest request) {
 
         // upload_file 是和 index.jsp <input type="file" name="upload_file"/> 进行对应 required = false 非必须参数
         User user = (User) session.getAttribute(ConstValue.CURRENT_USER);
@@ -171,6 +173,55 @@ public class ProductManageController {
             return ServerResponse.createBySuccessMessageData("上传文件成功", fileMap);
         } else {
             return ServerResponse.createByErrorMessage("无权限操作");
+        }
+    }
+
+    @RequestMapping(value = "richtext_img_upload.do", method = RequestMethod.POST)
+    @ResponseBody
+    public Map richTextImgUpload(HttpSession session, @RequestParam(value = "upload_file", required = false) MultipartFile file,
+                                 HttpServletRequest request, HttpServletResponse response) {
+        // 富文本中对于返回值有自己的要求，我们使用的是simditor,所以按照simditor的要求返回
+        // http://simditor.tower.im//docs/doc-config.html
+        //  {
+        //      "success": true/false,
+        //      "msg": "error message", # optional
+        //      "file_path": "[real file path]"
+        // }
+        Map resultMap = Maps.newHashMap();
+        // upload_file 是和 index.jsp <input type="file" name="upload_file"/> 进行对应 required = false 非必须参数
+        User user = (User) session.getAttribute(ConstValue.CURRENT_USER);
+        if (user == null) {
+            resultMap.put("success",false);
+            resultMap.put("msg","请登录管理员");
+            return resultMap;
+        }
+
+        if (iUserService.checkAdminRole(user).isSuccess()) {
+            // 富文本中对于返回值有自己的要求，我们使用的是simditor,所以按照simditor的要求返回
+            // http://simditor.tower.im//docs/doc-config.html
+            String path = request.getSession().getServletContext().getRealPath("upload");
+            String targetFileName = iFileService.upload(file, path);
+
+            if(StringUtils.isBlank(targetFileName))
+            {
+                resultMap.put("success",false);
+                resultMap.put("msg","上传失败");
+                return resultMap;
+            }
+
+            String url = PropertiesUtil.getProperty(ConstValue.FTPPREFIX) + targetFileName;
+
+            resultMap.put("success",true);
+            resultMap.put("msg","上传文件成功");
+            resultMap.put("file_path",url);
+
+            // 前端的插件一般对后端的返回都是要求的，谈价处理response的header
+            response.addHeader("Access-Control-Allow-Headers","X-File-Name");
+            return resultMap;
+        } else {
+            resultMap.put("success",false);
+            resultMap.put("msg","无权限操作");
+            return resultMap;
         }
     }
 }
