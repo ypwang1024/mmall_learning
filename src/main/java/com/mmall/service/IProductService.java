@@ -39,7 +39,8 @@ public interface IProductService {
 
     /**
      * 使用pageHelper分页插件。实现分页
-     * @param pageNum 当前页数
+     *
+     * @param pageNum  当前页数
      * @param pageSize 每页最大记录数
      * @return
      */
@@ -47,12 +48,33 @@ public interface IProductService {
 
     /**
      * 商品查询
+     *
      * @param productName 商品名称
-     * @param productId 商品ID
-     * @param pageNum 当前页数
-     * @param pageSize 每页最大记录数
+     * @param productId   商品ID
+     * @param pageNum     当前页数
+     * @param pageSize    每页最大记录数
      * @return
      */
     ServerResponse<PageInfo> searchProduct(String productName, Integer productId,
                                            Integer pageNum, Integer pageSize);
+
+    /**
+     * 前台页面获取商品信息
+     *
+     * @param productId
+     * @return
+     */
+    ServerResponse<ProductDetailVo> getProductDetail(Integer productId);
+
+    /**
+     * 根据关键字和分类id获得商品信息
+     *
+     * @param keyword    关键字
+     * @param categoryId 分类ID
+     * @param pageNum    当前页码
+     * @param pageSize   每页最大数
+     * @param orderBy    排序依据 形如“price_desc”
+     * @return
+     */
+    ServerResponse<PageInfo> getProductByKeyWordCategory(String keyword, Integer categoryId, int pageNum, int pageSize, String orderBy);
 }

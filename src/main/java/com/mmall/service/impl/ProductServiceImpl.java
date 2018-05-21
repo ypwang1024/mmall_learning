@@ -13,6 +13,7 @@ import com.mmall.dao.CategoryMapper;
 import com.mmall.dao.ProductMapper;
 import com.mmall.pojo.Category;
 import com.mmall.pojo.Product;
+import com.mmall.service.ICategoryService;
 import com.mmall.service.IProductService;
 import com.mmall.util.DateTimeUtil;
 import com.mmall.util.PropertiesUtil;
@@ -36,6 +37,9 @@ public class ProductServiceImpl implements IProductService {
 
     @Autowired
     private CategoryMapper categoryMapper;
+
+    @Autowired
+    private ICategoryService iCategoryService;
 
     @Override
     public ServerResponse saveOrUpdateProduct(Product product) {
@@ -142,8 +146,8 @@ public class ProductServiceImpl implements IProductService {
             productListVoList.add(assembleProductListVo(product));
         }
         // 3. pageHelper --收尾
-        PageInfo pageResult = new PageInfo();
-        pageResult.setList(productListVoList);
+        PageInfo pageResult = new PageInfo(productListVoList);
+        //pageResult.setList(productListVoList);
         // 或者使用构造器注入list
         // PageInfo pageResult = new PageInfo(productListVoList);
         return ServerResponse.createBySuccessData(pageResult);
@@ -181,5 +185,69 @@ public class ProductServiceImpl implements IProductService {
 
         PageInfo pageResult = new PageInfo(productListVoList);
         return ServerResponse.createBySuccessData(pageResult);
+    }
+
+    @Override
+    public ServerResponse<ProductDetailVo> getProductDetail(Integer productId) {
+        // 返回包装类而不是返回product是因为包装类可以传递更多的信息
+        if (productId == null) {
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.ILLEGAL_ARGUMENT.getCode(), ResponseCode.ILLEGAL_ARGUMENT.getDesc());
+        }
+        Product product = productMapper.selectByPrimaryKey(productId);
+        if (product == null) {
+            return ServerResponse.createByErrorMessage("商品已下架或者删除");
+        }
+
+        if (product.getStatus() != ConstValue.ProductStatusEnum.ON_SALE.getCode()) {
+            return ServerResponse.createByErrorMessage("商品已下架或者删除");
+        }
+        // vo对象 --> value object 这里先按照这种写法进行编码
+        // pojo --> bo (business object)--> vo (view object)
+        ProductDetailVo productDetailVo = assembleProductDetailVo(product);
+        return ServerResponse.createBySuccessMessageData("获取商品成功", productDetailVo);
+    }
+
+    @Override
+    public ServerResponse<PageInfo> getProductByKeyWordCategory(String keyword, Integer categoryId, int pageNum, int pageSize, String orderBy) {
+        if (StringUtils.isBlank(keyword) && categoryId == null) {
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.ILLEGAL_ARGUMENT.getCode(), ResponseCode.ILLEGAL_ARGUMENT.getDesc());
+        }
+
+        List<Integer> categoryIdList = Lists.newArrayList();
+
+        if (categoryId != null) {
+            Category category = categoryMapper.selectByPrimaryKey(categoryId);
+            if (category == null && StringUtils.isBlank(keyword)) {
+                // 没有该分类，并且没有关键字，这个时候返回一个空的结果集，不报错
+                PageHelper.startPage(pageNum, pageSize);
+                List<ProductListVo> productListVoList = Lists.newArrayList();
+                PageInfo pageInfo = new PageInfo(productListVoList);
+                return ServerResponse.createBySuccessData(pageInfo);
+            }
+            categoryIdList = iCategoryService.selectCategoryAndDeepChildrenCategory(category.getId()).getData();
+        }
+        if (StringUtils.isNotBlank(keyword)) {
+            keyword = new StringBuilder().append("%").append(keyword).append("%").toString();
+
+        }
+        // 排序处理
+        PageHelper.startPage(pageNum, pageSize);
+        if (StringUtils.isNotBlank(orderBy)) {
+            if (ConstValue.ProductListOrderBy.PRICE_ASC_DESC.contains(orderBy)) {
+                String[] orderByArray = orderBy.split("_");
+                // 格式为orderBy("price asc");
+                PageHelper.orderBy(orderByArray[0] + " " + orderByArray[1]);
+            }
+        }
+        List<Product> productList = productMapper.selectByNameAndCategoryIds(
+                StringUtils.isBlank(keyword) ? null : keyword,
+                categoryIdList.size() > 0 ? categoryIdList : null);
+        List<ProductListVo> productListVoList = Lists.newArrayList();
+        for (Product product : productList) {
+            ProductListVo productListVo = assembleProductListVo(product);
+            productListVoList.add(productListVo);
+        }
+        PageInfo pageInfo2 = new PageInfo(productListVoList);
+        return ServerResponse.createBySuccessData(pageInfo2);
     }
 }

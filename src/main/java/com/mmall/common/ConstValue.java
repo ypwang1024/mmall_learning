@@ -1,5 +1,9 @@
 package com.mmall.common;
 
+import com.google.common.collect.Sets;
+
+import java.util.Set;
+
 /**
  * @program: mmall
  * @description: 定义系统常量值
@@ -32,6 +36,32 @@ public class ConstValue {
          * 管理员
          */
         int ROLE_ADMIN = 1;
+    }
+
+    public interface ProductListOrderBy {
+        Set<String> PRICE_ASC_DESC = Sets.newHashSet("price_desc", "price_asc");
+    }
+
+    public enum ProductStatusEnum {
+
+        ON_SALE("在线", 1);
+
+        private String value;
+        private int code;
+
+        ProductStatusEnum(String value, int code) {
+            this.value = value;
+            this.code = code;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
     }
 
     /**

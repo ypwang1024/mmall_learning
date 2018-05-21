@@ -106,7 +106,7 @@ public class CategoryServiceImpl implements ICategoryService {
      * @return
      */
     @Override
-    public ServerResponse selectCategoryAndDeepChildrenCategory(Integer categoryId) {
+    public ServerResponse<List<Integer>> selectCategoryAndDeepChildrenCategory(Integer categoryId) {
         Set<Category> categorySet = Sets.newHashSet();
         // 调用递归算法
         findChildCategory(categorySet, categoryId);
