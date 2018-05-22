@@ -224,7 +224,9 @@ public class ProductServiceImpl implements IProductService {
                 PageInfo pageInfo = new PageInfo(productListVoList);
                 return ServerResponse.createBySuccessData(pageInfo);
             }
-            categoryIdList = iCategoryService.selectCategoryAndDeepChildrenCategory(category.getId()).getData();
+            if(category != null){
+                categoryIdList = iCategoryService.selectCategoryAndDeepChildrenCategory(category.getId()).getData();
+            }
         }
         if (StringUtils.isNotBlank(keyword)) {
             keyword = new StringBuilder().append("%").append(keyword).append("%").toString();
