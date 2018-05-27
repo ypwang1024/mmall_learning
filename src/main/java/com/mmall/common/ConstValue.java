@@ -42,6 +42,20 @@ public class ConstValue {
         Set<String> PRICE_ASC_DESC = Sets.newHashSet("price_desc", "price_asc");
     }
 
+    public interface Cart
+    {
+        /** 购物车商品处于选中状态*/
+        int CHECKED = 1;
+        /** 购物车商品处于未选中状态*/
+        int UN_CHECKED = 0;
+
+        /**限制失败*/
+        String LIMIT_NUM_FAIL = "LIMIT_NUM_FAIL";
+
+        /**限制成功*/
+        String LIMIT_NUM_SUCCESS = "LIMIT_NUM_SUCCESS";
+    }
+
     public enum ProductStatusEnum {
 
         ON_SALE("在线", 1);
