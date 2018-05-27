@@ -7,6 +7,7 @@ import com.mmall.vo.ProductDetailVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -29,13 +30,13 @@ public class ProductController {
      * @param productId
      * @return
      */
-    @RequestMapping("product_detail.do")
+    @RequestMapping(value = "product_detail.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<ProductDetailVo> productDtail(Integer productId) {
         return iProductService.getProductDetail(productId);
     }
 
-    @RequestMapping("product_list.do")
+    @RequestMapping(value = "product_list.do",  method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<PageInfo> productList(@RequestParam(value = "keyword", required = false) String keyword,
                                                 @RequestParam(value = "categoryId", required = false) Integer categoryId,
@@ -44,6 +45,4 @@ public class ProductController {
                                                 @RequestParam(value = "orderBy", defaultValue = "") String orderBy) {
         return iProductService.getProductByKeyWordCategory(keyword, categoryId, pageNum, pageSize, orderBy);
     }
-
-
 }
