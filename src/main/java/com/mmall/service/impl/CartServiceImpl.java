@@ -1,7 +1,9 @@
 package com.mmall.service.impl;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.mmall.common.ConstValue;
+import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
 import com.mmall.dao.CartMapper;
 import com.mmall.dao.ProductMapper;
@@ -55,6 +57,61 @@ public class CartServiceImpl implements ICartService {
             cart.setQuantity(count);
             cartMapper.updateByPrimaryKeySelective(cart);
         }
+        CartVo cartVo = getCartVoLimit(userId);
+        return ServerResponse.createBySuccessData(cartVo);
+    }
+
+    /**
+     * 更新购物车
+     *
+     * @param userId
+     * @param productId
+     * @param count
+     * @return
+     */
+    @Override
+    public ServerResponse<CartVo> updateCart(Integer userId, Integer productId, Integer count) {
+        if (productId == null || count == null) {
+            return ServerResponse.createByErrorMessage("参数错误");
+        }
+
+        Cart cart = cartMapper.selectCartByUserIdAndProductId(userId, productId);
+        if (cart != null) {
+            cart.setQuantity(count);
+        }
+        cartMapper.updateByPrimaryKeySelective(cart);
+        CartVo cartVo = getCartVoLimit(userId);
+        return ServerResponse.createBySuccessData(cartVo);
+    }
+
+    /**
+     * 删除购物车，和前台约定多个productId用逗号连接
+     *
+     * @param userId
+     * @param productIds
+     * @return
+     */
+    @Override
+    public ServerResponse<CartVo> deleteCart(Integer userId, String productIds) {
+        // 使用guava将字符串转成集合
+        List<String> productList = Splitter.on(",").splitToList(productIds);
+        if (CollectionUtils.isEmpty(productList)) {
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.ILLEGAL_ARGUMENT.getCode(), ResponseCode.ILLEGAL_ARGUMENT.getDesc());
+        }
+        cartMapper.deleteByUserIdAndProductIds(userId, productList);
+        // 从db中重新获取
+        CartVo cartVo = getCartVoLimit(userId);
+        return ServerResponse.createBySuccessData(cartVo);
+    }
+
+    /**
+     * 查询购物车商品集合
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    public ServerResponse<CartVo> cartList(Integer userId) {
         CartVo cartVo = getCartVoLimit(userId);
         return ServerResponse.createBySuccessData(cartVo);
     }
@@ -138,4 +195,6 @@ public class CartServiceImpl implements ICartService {
         }
         return cartMapper.selectCartProductCheckedStatusByUserId(userId) == 0;
     }
+
+
 }

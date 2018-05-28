@@ -11,4 +11,10 @@ import com.mmall.vo.CartVo;
  **/
 public interface ICartService {
     ServerResponse<CartVo> addCart(Integer userId, Integer productId, Integer count);
+
+    ServerResponse<CartVo> updateCart(Integer userId, Integer productId, Integer count);
+
+    ServerResponse<CartVo> deleteCart(Integer userId, String productIds);
+
+    ServerResponse<CartVo> cartList(Integer userId);
 }
