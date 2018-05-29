@@ -142,7 +142,7 @@ public class CartController {
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
-        return iCartService.selectOrUnSelect(user.getId(), productId, ConstValue.Cart.UN_CHECKED);
+        return iCartService.selectOrUnSelect(user.getId(), productId, ConstValue.Cart.CHECKED);
     }
 
     /**

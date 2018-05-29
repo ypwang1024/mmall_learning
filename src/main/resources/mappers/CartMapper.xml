@@ -137,12 +137,12 @@
         UPDATE mmall_cart
         SET checked = #{checked} ,update_time = now()
         where user_id = #{userId}
-        <if test="product_id != null">
+        <if test="productId != null">
             and product_id = #{productId}
         </if>
     </update>
     <!--使用mysql内置函数IFNULL(SUM (quantity), 0)如果等于null赋予0-->
     <select id="selectCartProductCount" resultType="int" parameterType="int">
-        SELECT IFNULL(SUM (quantity), 0) as productcount from mmall_cart WHERE user_id = #{userId}
+        SELECT IFNULL(SUM(quantity), 0) as productcount from mmall_cart WHERE user_id = #{userId}
     </select>
 </mapper>
