@@ -96,5 +96,86 @@ public class CartController {
         return iCartService.cartList(user.getId());
     }
 
-    // todo 全选，全反选，单选，单反选
+    /**
+     * 全选
+     *
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "select_all.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<CartVo> selectAll(HttpSession session) {
+        User user = (User) session.getAttribute(ConstValue.CURRENT_USER);
+        if (user == null) {
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        return iCartService.selectOrUnSelect(user.getId(), null, ConstValue.Cart.CHECKED);
+    }
+
+    /**
+     * 全反选
+     *
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "un_select_all.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<CartVo> unSelectAll(HttpSession session) {
+        User user = (User) session.getAttribute(ConstValue.CURRENT_USER);
+        if (user == null) {
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        return iCartService.selectOrUnSelect(user.getId(), null, ConstValue.Cart.UN_CHECKED);
+    }
+
+    /**
+     * 单选
+     *
+     * @param session
+     * @param productId
+     * @return
+     */
+    @RequestMapping(value = "select_single.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<CartVo> selectSingle(HttpSession session, Integer productId) {
+        User user = (User) session.getAttribute(ConstValue.CURRENT_USER);
+        if (user == null) {
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        return iCartService.selectOrUnSelect(user.getId(), productId, ConstValue.Cart.UN_CHECKED);
+    }
+
+    /**
+     * 单反选
+     *
+     * @param session
+     * @param productId
+     * @return
+     */
+    @RequestMapping(value = "unSelect_single.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<CartVo> unSelectSingle(HttpSession session, Integer productId) {
+        User user = (User) session.getAttribute(ConstValue.CURRENT_USER);
+        if (user == null) {
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        return iCartService.selectOrUnSelect(user.getId(), productId, ConstValue.Cart.UN_CHECKED);
+    }
+
+    /**
+     * 查询当前用户的购物车里面的产品数量，如果这个产品有10个，那么数量就是10
+     *
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "get_cart_product_count.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<Integer> getCartProductCount(HttpSession session) {
+        User user = (User) session.getAttribute(ConstValue.CURRENT_USER);
+        if (user == null) {
+            return ServerResponse.createBySuccessData(0);
+        }
+
+        return iCartService.getCartProductCount(user.getId());
+    }
 }
