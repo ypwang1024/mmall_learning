@@ -57,8 +57,8 @@ public class CartServiceImpl implements ICartService {
             cart.setQuantity(count);
             cartMapper.updateByPrimaryKeySelective(cart);
         }
-        CartVo cartVo = getCartVoLimit(userId);
-        return ServerResponse.createBySuccessData(cartVo);
+        //CartVo cartVo = getCartVoLimit(userId);
+        return cartList(userId);
     }
 
     /**
@@ -80,8 +80,8 @@ public class CartServiceImpl implements ICartService {
             cart.setQuantity(count);
         }
         cartMapper.updateByPrimaryKeySelective(cart);
-        CartVo cartVo = getCartVoLimit(userId);
-        return ServerResponse.createBySuccessData(cartVo);
+        //CartVo cartVo = getCartVoLimit(userId);
+        return cartList(userId);
     }
 
     /**
@@ -100,8 +100,7 @@ public class CartServiceImpl implements ICartService {
         }
         cartMapper.deleteByUserIdAndProductIds(userId, productList);
         // 从db中重新获取
-        CartVo cartVo = getCartVoLimit(userId);
-        return ServerResponse.createBySuccessData(cartVo);
+        return cartList(userId);
     }
 
     /**
@@ -196,5 +195,26 @@ public class CartServiceImpl implements ICartService {
         return cartMapper.selectCartProductCheckedStatusByUserId(userId) == 0;
     }
 
+    /**
+     * 全选，全反选
+     *
+     * @param userId
+     * @param productId
+     * @param checked
+     * @return
+     */
+    @Override
+    public ServerResponse<CartVo> selectOrUnSelect(Integer userId, Integer productId, Integer checked) {
+        cartMapper.checkedOrUncheckedProduct(userId, productId, checked);
+        return cartList(userId);
+    }
+
+    @Override
+    public ServerResponse<Integer> getCartProductCount(Integer userId) {
+        if (userId == null) {
+            return ServerResponse.createBySuccessData(0);
+        }
+        return ServerResponse.createBySuccessData(cartMapper.selectCartProductCount(userId));
+    }
 
 }
