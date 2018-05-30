@@ -1,5 +1,7 @@
 package com.mmall.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Maps;
 import com.mmall.common.ServerResponse;
 import com.mmall.dao.ShippingMapper;
@@ -8,6 +10,7 @@ import com.mmall.service.IShippingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,9 +46,36 @@ public class ShippingServiceImpl implements IShippingService {
         // shippingId可能是自己的，也可能是他人的，这样就可能把他人地址也删除。
         // 这里需要把shippingId和userId关联起来，不能使用shippingMapper.deleteByPrimaryKey(shippingId);
         int resultCount = shippingMapper.deleteByUserIdAndShippingId(userId, shippingId);
-        if (resultCount > 0){
+        if (resultCount > 0) {
             return ServerResponse.createByErrorMessage("删除地址成功");
         }
         return ServerResponse.createByErrorMessage("删除地址失败");
+    }
+
+    @Override
+    public ServerResponse updateShipping(Integer userId, Shipping shipping) {
+        shipping.setUserId(userId);
+        int rowCount = shippingMapper.updateByShipping(shipping);
+        if (rowCount > 0) {
+            return ServerResponse.createBySuccessMessage("更新地址成功");
+        }
+        return ServerResponse.createByErrorMessage("更新地址失败");
+    }
+
+    @Override
+    public ServerResponse<Shipping> selectShipping(Integer userId, Integer shippingId) {
+        Shipping shipping = shippingMapper.selectShippingByIdAndUserId(userId, shippingId);
+        if (shipping == null) {
+            return ServerResponse.createByErrorMessage("无法查询到该地址");
+        }
+        return ServerResponse.createBySuccessMessageData("更新地址成功", shipping);
+    }
+
+    @Override
+    public ServerResponse<PageInfo> shippingList(Integer userId, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Shipping> shippingList = shippingMapper.selectShippingListByUserId(userId);
+        PageInfo pageInfo = new PageInfo(shippingList);
+        return ServerResponse.createBySuccessData(pageInfo);
     }
 }
