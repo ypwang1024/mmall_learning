@@ -273,6 +273,7 @@
           <target>8</target>
           <encoding>UTF-8</encoding>
           <compilerArguments>
+            <!--加载本地jar包-->
             <extdirs>${project.basedir}/src/main/webapp/WEB-INF/lib</extdirs>
           </compilerArguments>
         </configuration>

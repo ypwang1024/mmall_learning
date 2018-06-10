@@ -27,4 +27,5 @@ target/
 .DS_Store
 Thumbs.db
 /logs/
-*.properties
+/src/main/resources/mmall.properties
+/src/main/resources/zfbinfo.properties
