@@ -42,17 +42,24 @@ public class ConstValue {
         Set<String> PRICE_ASC_DESC = Sets.newHashSet("price_desc", "price_asc");
     }
 
-    public interface Cart
-    {
-        /** 购物车商品处于选中状态*/
+    public interface Cart {
+        /**
+         * 购物车商品处于选中状态
+         */
         int CHECKED = 1;
-        /** 购物车商品处于未选中状态*/
+        /**
+         * 购物车商品处于未选中状态
+         */
         int UN_CHECKED = 0;
 
-        /**限制失败*/
+        /**
+         * 限制失败
+         */
         String LIMIT_NUM_FAIL = "LIMIT_NUM_FAIL";
 
-        /**限制成功*/
+        /**
+         * 限制成功
+         */
         String LIMIT_NUM_SUCCESS = "LIMIT_NUM_SUCCESS";
     }
 
@@ -78,6 +85,99 @@ public class ConstValue {
 
     }
 
+    /**
+     * 订单状态枚举
+     */
+    public enum OrderStatusEnum {
+        CANCELED(1, "已取消"),
+        NO_PAY(10, "未支付"),
+        PAID(20, "已付款"),
+        SHIPPED(40, "已发货"),
+        ORDER_SUCCESS(50, "订单完成"),
+        ORDER_CLOSE(60, "订单关闭");
+
+        private String value;
+        private int code;
+
+        OrderStatusEnum(int code, String value) {
+            this.value = value;
+            this.code = code;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public int getCode() {
+            return code;
+        }
+    }
+
+    /**
+     * 交易状态常量，支付宝原生值
+     */
+    public interface AlipayCallBack {
+        //	交易创建，等待买家付款
+        String TRADE_STATUS_WAIT_BUYER_PAY = "WAIT_BUYER_PAY";
+        // 	交易支付成功
+        String TRADE_STATUS_TRADE_SUCCESS = "TRADE_SUCCESS";
+
+        // 	未付款交易超时关闭，或支付完成后全额退款
+        String TRADE_STATUS_TRADE_CLOSED = "TRADE_CLOSED";
+
+        // 	交易结束，不可退款
+        String TRADE_STATUS_TRADE_FINISHED = "TRADE_FINISHED";
+
+        String RESPONSE_SUCCESS = "success";
+        String RESPONSE_FAILED = "failed";
+    }
+
+    /**
+     * 支付方式
+     */
+    public enum PayPlatformEnum {
+        ALIPAY(1, "支付宝"),
+        WECHAT(2, "微信");
+        private String value;
+        private int code;
+
+        PayPlatformEnum(int code, String value) {
+            this.value = value;
+            this.code = code;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public int getCode() {
+            return code;
+        }
+    }
+
+
+    /**
+     * 支付类型
+     */
+    public enum PaymentTypeEnum {
+        ONLINE_PAY(1, "在线支付"),
+        OFFLINE_PAY(2, "货到付款");
+        private String value;
+        private int code;
+
+        PayPlatformEnum(int code, String value) {
+            this.value = value;
+            this.code = code;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public int getCode() {
+            return code;
+        }
+    }
     /**
      * FTP服务器IP
      */
