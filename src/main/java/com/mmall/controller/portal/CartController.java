@@ -175,7 +175,6 @@ public class CartController {
         if (user == null) {
             return ServerResponse.createBySuccessData(0);
         }
-
         return iCartService.getCartProductCount(user.getId());
     }
 }
