@@ -11,7 +11,10 @@ import java.io.Serializable;
  * @author: ypwang
  * @create: 2018-04-13 22:15
  **/
-/**保证序列化json的时候，如果是NULL的对象，key也会消失*/
+
+/**
+ * 保证序列化json的时候，如果是NULL的对象，key也会消失
+ */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ServerResponse<T> implements Serializable {
     /**
@@ -61,7 +64,9 @@ public class ServerResponse<T> implements Serializable {
      * 这里添加JsonIgnore注解，忽略该字段
      * @return
      */
-    /**使之不在json序列化结果之中*/
+    /**
+     * 使之不在json序列化结果之中
+     */
     @JsonIgnore
     public boolean isSuccess() {
         return this.status == ResponseCode.SUCCESS.getCode();
@@ -106,7 +111,7 @@ public class ServerResponse<T> implements Serializable {
         return new ServerResponse<T>(ResponseCode.ERROR.getCode(), errorMessage);
     }
 
-    public static <T> ServerResponse<T> createByErrorCodeMessage(int errorCode,String errorMessage) {
+    public static <T> ServerResponse<T> createByErrorCodeMessage(int errorCode, String errorMessage) {
         return new ServerResponse<T>(errorCode, errorMessage);
     }
 }
