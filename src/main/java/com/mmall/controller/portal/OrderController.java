@@ -130,11 +130,32 @@ public class OrderController {
     }
 
     @RequestMapping(value = "create_order.do", method = RequestMethod.POST)
+    @ResponseBody
     public ServerResponse createOrder(HttpSession session, Integer shippingId){
         User user = (User) session.getAttribute(ConstValue.CURRENT_USER);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
         return iOrderService.createOrder(user.getId(), shippingId);
+    }
+
+    @RequestMapping(value = "cancel_order.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse cancelOrder(HttpSession session, Long orderNo){
+        User user = (User) session.getAttribute(ConstValue.CURRENT_USER);
+        if (user == null) {
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        return iOrderService.cancelOrder(user.getId(), orderNo);
+    }
+
+    @RequestMapping(value = "get_order_cart_product.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse getOrderCartProduct(HttpSession session){
+        User user = (User) session.getAttribute(ConstValue.CURRENT_USER);
+        if (user == null) {
+            return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        return iOrderService.getOrderCartProduct(user.getId());
     }
 }
