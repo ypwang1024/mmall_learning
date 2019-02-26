@@ -105,7 +105,7 @@ public class CartProductVo {
     }
 
     public BigDecimal getProductTotalPrice() {
-        return productTotalPrice;
+        return productTotalPrice == null ? new BigDecimal(0) : productTotalPrice;
     }
 
     public void setProductTotalPrice(BigDecimal productTotalPrice) {
