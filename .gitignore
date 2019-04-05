@@ -29,3 +29,7 @@ Thumbs.db
 /logs/
 /src/main/resources/mmall.properties
 /src/main/resources/zfbinfo.properties
+/src/main/resources.prod/
+/src/main/resources.dev/
+/src/main/resources.beta/
+/src/main/resources/datasource.properties
