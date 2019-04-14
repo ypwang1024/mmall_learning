@@ -112,13 +112,13 @@ public class ConstValue {
             return code;
         }
 
-        public static  OrderStatusEnum codeOf(int code){
-            for(OrderStatusEnum orderStatusEnum : values()){
-                if(orderStatusEnum.getCode() == code){
-                    return  orderStatusEnum;
+        public static OrderStatusEnum codeOf(int code) {
+            for (OrderStatusEnum orderStatusEnum : values()) {
+                if (orderStatusEnum.getCode() == code) {
+                    return orderStatusEnum;
                 }
             }
-            throw  new RuntimeException("未找到对应的枚举。");
+            throw new RuntimeException("未找到对应的枚举。");
         }
     }
 
@@ -187,17 +187,25 @@ public class ConstValue {
             return code;
         }
 
-        public static  PaymentTypeEnum codeOf(int code) {
+        public static PaymentTypeEnum codeOf(int code) {
             // values 表示 当前枚举数组集合
-            for(PaymentTypeEnum paymentTypeEnum : values()){
-                if(paymentTypeEnum.getCode() == code)
-                {
-                    return  paymentTypeEnum;
+            for (PaymentTypeEnum paymentTypeEnum : values()) {
+                if (paymentTypeEnum.getCode() == code) {
+                    return paymentTypeEnum;
                 }
             }
             throw new RuntimeException("没有找到对应的枚举");
         }
     }
+
+    /**
+     * Redis缓存有效时间
+     */
+    public interface RedisCacheExTime {
+        // 30 min
+        int REDIS_SESSION_EXTIME = 60 * 30;
+    }
+
     /**
      * FTP服务器IP
      */
