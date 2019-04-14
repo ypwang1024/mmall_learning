@@ -272,8 +272,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <!--jdk，jre版本-->
-          <source>8</source>
-          <target>8</target>
+          <source>7</source>
+          <target>7</target>
           <encoding>UTF-8</encoding>
           <compilerArguments>
             <!--加载本地jar包-->

@@ -1,6 +1,8 @@
 package com.mmall.pojo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -8,6 +10,8 @@ import java.util.Date;
 /**
  * data 注解包含了getter,setter, tostring, EqualsAndhashCode 方法
  */
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 public class Order {
     private Integer id;
