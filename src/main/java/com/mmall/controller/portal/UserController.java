@@ -65,8 +65,14 @@ public class UserController {
      */
     @RequestMapping(value = "logout.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<String> logout(HttpSession session) {
-        session.removeAttribute(ConstValue.CURRENT_USER);
+    public ServerResponse<String> logout(HttpServletRequest request, HttpServletResponse response) {
+        // session.removeAttribute(ConstValue.CURRENT_USER);
+        // 先从cookie拿到缓存id
+        String loginToken = CookieUtil.readLoginToken(request);
+        // 删除cookie
+        CookieUtil.delLoginToken(request, response);
+        // 删除redis登录用户缓存
+        RedisPoolUtil.delete(loginToken);
         return ServerResponse.createBySuccess();
     }
 
@@ -103,8 +109,19 @@ public class UserController {
      */
     @RequestMapping(value = "get_user_info.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<User> getUserInfo(HttpSession session) {
-        User user = (User) session.getAttribute(ConstValue.CURRENT_USER);
+    public ServerResponse<User> getUserInfo(HttpServletRequest request) {
+        // 不再从session中取登录信息
+        // User user = (User) session.getAttribute(ConstValue.CURRENT_USER);
+        // 从缓存中取到登录用户信息
+        // 先从cookie拿到缓存id
+        String loginToken = CookieUtil.readLoginToken(request);
+        if (StringUtils.isEmpty(loginToken)) {
+            return ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户的信息");
+        }
+
+        String userJson = RedisPoolUtil.get(loginToken);
+
+        User user = JsonUtil.string2Obj(userJson, User.class);
         if (user != null) {
             return ServerResponse.createBySuccessData(user);
         }
