@@ -212,7 +212,7 @@ public class UserController {
         user.setUsername(currentUser.getUsername());
         ServerResponse<User> response = iUserService.updateUserInfomation(user);
         if (response.isSuccess()) {
-            // 返回值不包含username, 重新赋值
+            // 返回值不包含username, 重新赋值 
             response.getData().setUsername(currentUser.getUsername());
             // session.setAttribute(ConstValue.CURRENT_USER, response.getData());
             RedisPoolUtil.setEx(session.getId(), JsonUtil.obj2String(response.getData()), ConstValue.RedisCacheExTime.REDIS_SESSION_EXTIME);
