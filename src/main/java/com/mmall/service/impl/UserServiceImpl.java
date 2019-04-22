@@ -154,6 +154,7 @@ public class UserServiceImpl implements IUserService {
             String md5Password = MD5Util.MD5EncodeUtf8(passwordNew);
             int rowCount = userMapper.updatePasswordByUsername(username, md5Password);
             if (rowCount > 0) {
+                RedisPoolUtil.delete(ConstValue.TOKEN_PREFIX + username);
                 return ServerResponse.createBySuccessMessage("修改密码成功");
             }
         } else {
