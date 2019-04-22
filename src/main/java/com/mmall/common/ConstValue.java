@@ -27,6 +27,11 @@ public class ConstValue {
      */
     public static final String USERNAME = "username";
 
+    /**
+     * Token 前缀
+     */
+    public static final String TOKEN_PREFIX = "token_";
+
     public interface Role {
         /**
          * 普通用户
