@@ -25,16 +25,26 @@
     </filter-mapping>
 
     <!--二期新增filter用来重置登录用户有效时间-->
+    <!--<filter>-->
+        <!--<filter-name>sessionExpireFilter</filter-name>-->
+        <!--<filter-class>com.mmall.controller.common.SessionExpireFilter</filter-class>-->
+    <!--</filter>-->
+    <!--<filter-mapping>-->
+        <!--<filter-name>sessionExpireFilter</filter-name>-->
+        <!--&lt;!&ndash;所有以do结尾的请求，都需要重置有效时间&ndash;&gt;-->
+        <!--<url-pattern>*.do</url-pattern>-->
+    <!--</filter-mapping>-->
+
+    <!--集成spring session 框架后使用官方提供的filter-->
     <filter>
-        <filter-name>sessionExpireFilter</filter-name>
-        <filter-class>com.mmall.controller.common.SessionExpireFilter</filter-class>
+        <filter-name>springSessionRepositoryFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>sessionExpireFilter</filter-name>
-        <!--所有以do结尾的请求，都需要重置有效时间-->
+        <filter-name>springSessionRepositoryFilter</filter-name>
         <url-pattern>*.do</url-pattern>
     </filter-mapping>
-    
+
     <!--web容器启动和关闭的监听器-->
     <listener>
         <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>

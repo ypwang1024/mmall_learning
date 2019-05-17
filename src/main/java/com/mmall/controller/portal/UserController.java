@@ -24,7 +24,7 @@ import javax.servlet.http.HttpSession;
 @RequestMapping("/user/")
 /**
  * @program: mmall
- * @description:
+ * @description: 使用分布式redis实现代码入侵(需要改写代码)的单点登录解决方案
  * @author: Ypwang1024
  * @create: 2018-04-13 21:45
  **/
