@@ -60,6 +60,11 @@ public class RedisShardedPool {
     private static Integer redisPort = Integer.parseInt(PropertiesUtil.getProperty("redis.port"));
 
     /**
+     * redis1 password
+     */
+    private static String redisPwd = PropertiesUtil.getProperty("redis.pwd");
+
+    /**
      * redis2 ip
      */
     private static String redis2Ip = PropertiesUtil.getProperty("redis2.ip");
@@ -70,6 +75,11 @@ public class RedisShardedPool {
     private static Integer redis2Port = Integer.parseInt(PropertiesUtil.getProperty("redis2.port"));
 
     /**
+     * redis2 password
+     */
+    private static String redis2Pwd = PropertiesUtil.getProperty("redis2.pwd");
+
+    /**
      * redis3 ip
      */
     private static String redis3Ip = PropertiesUtil.getProperty("redis3.ip");
@@ -78,6 +88,11 @@ public class RedisShardedPool {
      * redis3 port
      */
     private static Integer redis3Port = Integer.parseInt(PropertiesUtil.getProperty("redis3.port"));
+
+    /**
+     * redis3 password
+     */
+    private static String redis3Pwd = PropertiesUtil.getProperty("redis3.pwd");
 
     private static void initPool() {
         JedisPoolConfig config = new JedisPoolConfig();
@@ -92,11 +107,11 @@ public class RedisShardedPool {
         // pool = new JedisPool(config, redisIp, redisPort, 1000 * 2);
 
         JedisShardInfo info1 = new JedisShardInfo(redisIp, redisPort, 1000 * 2);
-        info1.setPassword("123");
+        info1.setPassword(redisPwd);
         JedisShardInfo info2 = new JedisShardInfo(redis2Ip, redis2Port, 1000 * 2);
-        info2.setPassword("123");
+        info2.setPassword(redis2Pwd);
         JedisShardInfo info3 = new JedisShardInfo(redis3Ip, redis3Port, 1000 * 2);
-        info3.setPassword("123");
+        info3.setPassword(redis3Pwd);
         List<JedisShardInfo> jedisShardInfoList = Lists.newArrayList(info1, info2, info3);
 
         // config 配置信息 MURMUR_HASH 指的是consistent hashing 一致性算法（默认）。还有一个是MD5, 第四个参数指的是key的匹配模式
