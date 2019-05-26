@@ -1,7 +1,6 @@
 package com.mmall.controller.backend;
 
 import com.github.pagehelper.PageInfo;
-import com.mmall.common.ConstValue;
 import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.User;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 /**
  * @program: mmall
@@ -41,7 +39,7 @@ public class OrderManageController {
     @RequestMapping(value = "order_detail.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<OrderVo> getOrderDetail(HttpServletRequest request, Long orderNo){
-        String loginToken = CookieUtil.readLoginToken(request);
+        /*String loginToken = CookieUtil.readLoginToken(request);
         if (StringUtils.isEmpty(loginToken)) {
             return ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户的信息");
         }
@@ -58,7 +56,10 @@ public class OrderManageController {
             return iOrderService.manageOrderDetail(orderNo);
         } else {
             return ServerResponse.createByErrorMessage("无权限操作");
-        }
+        }*/
+
+        // 通过权限拦截器验证
+        return iOrderService.manageOrderDetail(orderNo);
     }
 
     @RequestMapping(value = "order_list.do", method = RequestMethod.POST)
@@ -66,7 +67,7 @@ public class OrderManageController {
     public ServerResponse getOrderList(HttpServletRequest request,
                                        @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                        @RequestParam(value = "pageSize", defaultValue = "10")int pageSize){
-        String loginToken = CookieUtil.readLoginToken(request);
+/*        String loginToken = CookieUtil.readLoginToken(request);
         if (StringUtils.isEmpty(loginToken)) {
             return ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户的信息");
         }
@@ -83,7 +84,9 @@ public class OrderManageController {
             return iOrderService.manageOrderList(pageNum, pageSize);
         } else {
             return ServerResponse.createByErrorMessage("无权限操作");
-        }
+        }*/
+        // 通过权限拦截器验证
+        return iOrderService.manageOrderList(pageNum, pageSize);
     }
 
     @RequestMapping(value = "search_order.do", method = RequestMethod.POST)
@@ -91,7 +94,7 @@ public class OrderManageController {
     public ServerResponse<PageInfo> searchOrder(HttpServletRequest request, Long orderNo,
                                                @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                                @RequestParam(value = "pageSize", defaultValue = "10") int pageSize){
-        String loginToken = CookieUtil.readLoginToken(request);
+    /*    String loginToken = CookieUtil.readLoginToken(request);
         if (StringUtils.isEmpty(loginToken)) {
             return ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户的信息");
         }
@@ -108,13 +111,16 @@ public class OrderManageController {
             return iOrderService.manageOrderSearch(orderNo, pageNum, pageSize);
         } else {
             return ServerResponse.createByErrorMessage("无权限操作");
-        }
+        }*/
+
+        // 通过权限拦截器验证
+        return iOrderService.manageOrderSearch(orderNo, pageNum, pageSize);
     }
 
     @RequestMapping(value = "send_goods.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<String> sendGoods(HttpServletRequest request, Long orderNo){
-        String loginToken = CookieUtil.readLoginToken(request);
+/*        String loginToken = CookieUtil.readLoginToken(request);
         if (StringUtils.isEmpty(loginToken)) {
             return ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户的信息");
         }
@@ -131,6 +137,9 @@ public class OrderManageController {
             return iOrderService.manageSendGoods(orderNo);
         } else {
             return ServerResponse.createByErrorMessage("无权限操作");
-        }
+        }*/
+
+        // 通过权限拦截器验证
+        return iOrderService.manageSendGoods(orderNo);
     }
 }
