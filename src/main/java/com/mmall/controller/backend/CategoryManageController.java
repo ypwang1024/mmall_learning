@@ -1,6 +1,5 @@
 package com.mmall.controller.backend;
 
-import com.mmall.common.ConstValue;
 import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.User;
@@ -8,7 +7,6 @@ import com.mmall.service.ICategoryService;
 import com.mmall.service.IUserService;
 import com.mmall.util.CookieUtil;
 import com.mmall.util.JsonUtil;
-import com.mmall.util.RedisShardedPoolUtil;
 import com.mmall.util.RedisShardedPoolUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 /**
  * @program: mmall
@@ -49,7 +46,7 @@ public class CategoryManageController {
     @ResponseBody
     public ServerResponse addCategory(HttpServletRequest request, String categoryName,
                                       @RequestParam(value = "parentId", defaultValue = "0") int parentId) {
-        // 1. 判断用户是否登陆
+        /*// 1. 判断用户是否登陆
         String loginToken = CookieUtil.readLoginToken(request);
         if (StringUtils.isEmpty(loginToken)) {
             return ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户的信息");
@@ -68,7 +65,10 @@ public class CategoryManageController {
             return iCategoryService.addCategory(categoryName, parentId);
         } else {
             return ServerResponse.createByErrorMessage("无权限操作，需要管理员权限。");
-        }
+        }*/
+
+        // 通过权限拦截器验证
+        return iCategoryService.addCategory(categoryName, parentId);
     }
 
     /**
@@ -82,7 +82,7 @@ public class CategoryManageController {
     @RequestMapping(value = "set_category_name.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse setCategoryName(HttpServletRequest request, Integer categoryId, String categoryName) {
-        // 判断是否是管理员是否登录
+        /*// 判断是否是管理员是否登录
         // 1. 判断用户是否登陆
         String loginToken = CookieUtil.readLoginToken(request);
         if (StringUtils.isEmpty(loginToken)) {
@@ -102,7 +102,10 @@ public class CategoryManageController {
             return iCategoryService.updateCategoryName(categoryId, categoryName);
         } else {
             return ServerResponse.createByErrorMessage("无权限操作，需要管理员权限。");
-        }
+        }*/
+
+        // 通过权限拦截器验证
+        return iCategoryService.updateCategoryName(categoryId, categoryName);
     }
 
     // 查询节点和递归查找功能的开发
@@ -118,7 +121,7 @@ public class CategoryManageController {
     @ResponseBody
     public ServerResponse getChildrenParallelCategory(HttpServletRequest request,
                                                       @RequestParam(value = "categoryId", defaultValue = "0") Integer categoryId) {
-        // 判断是否是管理员是否登录
+  /*      // 判断是否是管理员是否登录
         // 1. 判断用户是否登陆
         String loginToken = CookieUtil.readLoginToken(request);
         if (StringUtils.isEmpty(loginToken)) {
@@ -138,7 +141,10 @@ public class CategoryManageController {
             return iCategoryService.getChildrenParallelCategory(categoryId);
         } else {
             return ServerResponse.createByErrorMessage("无权限操作，需要管理员权限。");
-        }
+        }*/
+
+        // 通过权限拦截器验证
+        return iCategoryService.getChildrenParallelCategory(categoryId);
     }
 
     /**
@@ -152,7 +158,7 @@ public class CategoryManageController {
     @ResponseBody
     public ServerResponse getCategoryAndDeepChildrenCategory(HttpServletRequest request,
                                                              @RequestParam(value = "categoryId", defaultValue = "0") Integer categoryId) {
-        // 判断是否是管理员是否登录
+   /*     // 判断是否是管理员是否登录
         // 1. 判断用户是否登陆
         String loginToken = CookieUtil.readLoginToken(request);
         if (StringUtils.isEmpty(loginToken)) {
@@ -172,6 +178,9 @@ public class CategoryManageController {
             return iCategoryService.selectCategoryAndDeepChildrenCategory(categoryId);
         } else {
             return ServerResponse.createByErrorMessage("无权限操作，需要管理员权限。");
-        }
+        }*/
+
+        // 通过权限拦截器验证
+        return iCategoryService.selectCategoryAndDeepChildrenCategory(categoryId);
     }
 }
