@@ -30,6 +30,7 @@ import com.mmall.vo.ShippingVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -607,5 +608,39 @@ public class OrderServiceImpl implements IOrderService {
             return ServerResponse.createBySuccessMessage("发货成功");
         }
         return ServerResponse.createByErrorMessage("没有找到该订单。");
+    }
+
+    /**
+     * 使用Spring Schedule 定时关闭订单
+     * @param hours
+     */
+    @Override
+    public void closeOrder(int hours) {
+        Date closeDateTime = DateUtils.addHours(new Date(), -hours);
+        List<Order> orderList = orderMapper.selectOrderStatusByCreateTime(ConstValue.OrderStatusEnum.NO_PAY.getCode(), DateTimeUtil.dateToString(closeDateTime));
+        for (Order order : orderList)
+        {
+            // 恢复商品库存
+            List<OrderItem> orderItemList = orderItemMapper.getByOrderNo(order.getOrderNo());
+            for(OrderItem orderItem : orderItemList)
+            {
+                // 查询时添加了行级锁，防止并发查询数据错误
+                // 一定使用主键where条件，防止整个表被锁，同时必须是支持MySql的InnoDB引擎
+                Integer stock = productMapper.selectStockByProductId(orderItem.getProductId());
+
+                // 考虑到商品可能被删除，返回值为null
+                if(stock == null)
+                {
+                    continue;
+                }
+                Product product = new Product();
+                product.setId(orderItem.getProductId());
+                // 把数量放回去
+                product.setStock(stock + orderItem.getQuantity());
+                productMapper.updateByPrimaryKeySelective(product);
+            }
+            orderMapper.closeOrderByOrderId(order.getId());
+            log.info("关闭订单OrderNo：{}", order.getOrderNo());
+        }
     }
 }
