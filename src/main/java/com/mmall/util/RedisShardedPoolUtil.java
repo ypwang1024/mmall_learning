@@ -26,7 +26,7 @@ public class RedisShardedPoolUtil {
 
         try {
             jedis = RedisShardedPool.getJedis();
-            jedis.set(key, value);
+            result = jedis.set(key, value);
         } catch (Exception e) {
             log.error("set key:{} value:{} error", key, value, e);
             RedisShardedPool.returnBrokenResource(jedis);
@@ -50,7 +50,7 @@ public class RedisShardedPoolUtil {
 
         try {
             jedis = RedisShardedPool.getJedis();
-            jedis.setex(key, exTime, value);
+            result = jedis.setex(key, exTime, value);
         } catch (Exception e) {
             log.error("setex key:{} value:{} extime:{} error", key, value, exTime, e);
             RedisShardedPool.returnBrokenResource(jedis);
@@ -120,6 +120,22 @@ public class RedisShardedPoolUtil {
             result = jedis.del(key);
         } catch (Exception e) {
             log.error("del key:{} error", key, e);
+            RedisShardedPool.returnBrokenResource(jedis);
+            return result;
+        }
+        RedisShardedPool.returnResource(jedis);
+        return result;
+    }
+
+    public static Long setNx(String key, String value) {
+        ShardedJedis jedis = null;
+        Long result = null;
+
+        try {
+            jedis = RedisShardedPool.getJedis();
+            result = jedis.setnx(key, value);
+        } catch (Exception e) {
+            log.error("setnv key:{} value:{} error", key, value, e);
             RedisShardedPool.returnBrokenResource(jedis);
             return result;
         }
