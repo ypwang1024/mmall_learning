@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PreDestroy;
 import java.util.Date;
 
 /**
@@ -23,6 +24,14 @@ public class CloseOrderTask {
 
     @Autowired
     private IOrderService iOrderService;
+
+    @PreDestroy
+    public void delLock()
+    {
+        // 第一重 防止死锁，设置key的有效期,可能由于各种客观存在的原因，该代码没有执行，如tomcat突然关闭，造成锁永久激活
+        // 防止死锁 PreDestroy 注解在tomcat关闭前执行，删除redis分布式锁，但是如果锁非常多，会造成shutdown时间比较长
+        RedisShardedPoolUtil.delete(ConstValue.RedisLock.CLOSE_ORDER_TASK_LOCK);
+    }
 
     // @Scheduled(cron = "0 */1 * * * ?") // 表示每一分钟
     public void closeOrderTaskV1() {
@@ -49,6 +58,7 @@ public class CloseOrderTask {
     private void closeOrder(String lockName)
     {
         // 为了方便测试，锁的有效期设置为50S
+        // 第一重 防止死锁，设置key的有效期
         RedisShardedPoolUtil.expire(lockName, 50);
         log.info("获取{}， ThreadName：{}", lockName, Thread.currentThread().getName());
         int hours = Integer.parseInt(PropertiesUtil.getProperty("close.order.task.time.hour", "2"));
