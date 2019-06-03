@@ -249,6 +249,18 @@
       <scope>provided</scope>
     </dependency>
 
+    <!--二期集成redisson框架 Redisson是架设在Redis基础上的一个Java驻内存数据网格(In-Memory Data Grid)-->
+    <dependency>
+      <groupId>org.redisson</groupId>
+      <artifactId>redisson</artifactId>
+      <version>2.9.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-avro</artifactId>
+      <version>2.9.0</version>
+    </dependency>
     <!-- https://mvnrepository.com/artifact/org.springframework.session/spring-session-data-redis -->
     <!--spring session 单点登录-->
     <dependency>
