@@ -83,6 +83,27 @@ public class RedisShardedPoolUtil {
     }
 
     /**
+     * getset 方法先获取旧值再赋值
+     * @param key
+     * @return
+     */
+    public static String getSet(String key, String value) {
+        ShardedJedis jedis = null;
+        String result = null;
+
+        try {
+            jedis = RedisShardedPool.getJedis();
+            result = jedis.getSet(key, value);
+        } catch (Exception e) {
+            log.error("getset key:{} error", key, e);
+            RedisShardedPool.returnBrokenResource(jedis);
+            return result;
+        }
+        RedisShardedPool.returnResource(jedis);
+        return result;
+    }
+
+    /**
      * 设置key的有效期
      *
      * @param key    key
