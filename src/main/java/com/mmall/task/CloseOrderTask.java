@@ -106,7 +106,9 @@ public class CloseOrderTask {
         boolean getLock = false;
         RLock lock = redissonManager.getRedisson().getLock(ConstValue.RedisLock.CLOSE_ORDER_TASK_LOCK);
         try {
-            if(getLock = lock.tryLock(2, 5, TimeUnit.SECONDS))
+            // 这里务必将waittime置为0,亦即tomcat集群中各个tomcat去竞争锁并不等待，防止同时获得锁
+            // 如果waittime不等于0，多个进程可能在waittime时间内都能拿到分布式锁，进而进行业务处理
+            if(getLock = lock.tryLock(0, 50, TimeUnit.SECONDS))
             {
                 log.info("Redisson获取到分布式锁{}, 当前线程{}", ConstValue.RedisLock.CLOSE_ORDER_TASK_LOCK, Thread.currentThread().getName());
                 int hours = Integer.parseInt(PropertiesUtil.getProperty("close.order.task.time.hour", "2"));
@@ -117,13 +119,14 @@ public class CloseOrderTask {
         } catch (InterruptedException e) {
             log.error("Redisson分布式锁获取异常，", e);
         }finally {
+            log.info("关闭订单定时任务完成{}", new Date().toString());
             if(!getLock)
             {
                 return;
             }
             // 注意用完之后释放锁
             lock.unlock();
-            log.info("关闭订单定时任务完成{}", new Date().toString());
+            log.info("Redisson分布式锁已经释放...");
         }
     }
 
